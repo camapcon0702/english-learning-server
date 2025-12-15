@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admin/grammars")
+@RequestMapping("/api/admin/grammars")
 @RequiredArgsConstructor
 public class GrammarController {
     private final GrammarService grammarService;
