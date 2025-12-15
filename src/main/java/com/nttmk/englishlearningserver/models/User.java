@@ -3,7 +3,6 @@ package com.nttmk.englishlearningserver.models;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import tools.jackson.databind.deser.bean.CreatorCandidate;
 
 import java.time.Instant;
 
