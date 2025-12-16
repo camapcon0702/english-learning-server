@@ -18,6 +18,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(HttpStatus.NOT_FOUND.value(), e.getMessage(), null));
     }
 
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<ApiResponse<Void>> handleExists(AlreadyExistsException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(HttpStatus.NOT_FOUND.value(), e.getMessage(), null));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleValidation(
             MethodArgumentNotValidException ex) {
