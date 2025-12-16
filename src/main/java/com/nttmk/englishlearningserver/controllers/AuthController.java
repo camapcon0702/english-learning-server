@@ -6,6 +6,7 @@ import com.nttmk.englishlearningserver.responses.ApiResponse;
 import com.nttmk.englishlearningserver.responses.LoginResponse;
 import com.nttmk.englishlearningserver.responses.UserResponse;
 import com.nttmk.englishlearningserver.services.AuthService;
+import com.nttmk.englishlearningserver.servicesInterface.IAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private final AuthService authService;
+    private final IAuthService authService;
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody LoginDTO loginDTO) {

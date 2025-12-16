@@ -15,8 +15,8 @@ public class RoleInitConfig {
 
     @PostConstruct
     public void initRoles() {
-        createIfNotExists("ADMIN");
-        createIfNotExists("USER");
+        createIfNotExists("ROLE_ADMIN");
+        createIfNotExists("ROLE_USER");
     }
 
     private void createIfNotExists(String roleName) {

@@ -35,18 +35,19 @@ public class AuthService implements IAuthService {
 
     @Override
     public LoginResponse login(LoginDTO loginDTO) {
+        User user = userRepository.findByEmail(loginDTO.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginDTO.getEmail(),
-                        loginDTO.getPassword()
+                        loginDTO.getPassword(),
+                        user.getAuthorities()
                 )
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String token = JwtProvider.generateToken(authentication);
-
-        User user = userRepository.findByEmail(loginDTO.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        String token = JwtProvider.generateToken(authentication, user);
 
         UserResponse userResponse = new UserResponse(user.getId(), user.getFullName(), user.getEmail(), user.getRole(), user.getCreatedAt());
 
@@ -63,7 +64,7 @@ public class AuthService implements IAuthService {
         }
 
         Role role = roleRepository
-                .findByName("USER")
+                .findByName("ROLE_USER")
                 .orElseThrow(() -> new RuntimeException("Role USER not found"));
 
 

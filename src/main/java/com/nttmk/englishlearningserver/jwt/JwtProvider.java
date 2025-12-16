@@ -1,5 +1,6 @@
 package com.nttmk.englishlearningserver.jwt;
 
+import com.nttmk.englishlearningserver.models.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.Authentication;
@@ -13,12 +14,13 @@ import io.jsonwebtoken.Jwts;
 public class JwtProvider {
     private static SecretKey key = Keys.hmacShaKeyFor(JwtConstant.SECRET_KEY.getBytes());
 
-    public static String generateToken(Authentication auth) {
+    public static String generateToken(Authentication auth, User user) {
         String jwt = Jwts.builder()
                 .setIssuer("NguyenPhuocLoc")
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + 86400000))
                 .claim("email", auth.getName())
+                .claim("role", user.getRole())
                 .signWith(key)
                 .compact();
 
@@ -39,5 +41,17 @@ public class JwtProvider {
 
         return email;
 
+    }
+
+    public static String getRoleFromJwtToken(String jwt) {
+        jwt = jwt.substring(7);
+
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(jwt)
+                .getBody();
+
+        return String.valueOf(claims.get("role"));
     }
 }
