@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AnswerResponse {
+public class AnswerViewResponse {
     private String label;
     private String content;
-    private boolean correct;
 }

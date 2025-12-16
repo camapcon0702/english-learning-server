@@ -9,8 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AnswerResponse {
-    private String label;
-    private String content;
-    private boolean correct;
+public class ExamResultResponse {
+    private String examId;
+    private int totalQuestions;
+    private int correctAnswers;
+    private double score;
 }

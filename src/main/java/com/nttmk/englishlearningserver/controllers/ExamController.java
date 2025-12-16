@@ -2,9 +2,12 @@ package com.nttmk.englishlearningserver.controllers;
 
 import com.nttmk.englishlearningserver.dto.ExamDTO;
 import com.nttmk.englishlearningserver.dto.ExamRandomDTO;
+import com.nttmk.englishlearningserver.dto.ExamSubmitDTO;
 import com.nttmk.englishlearningserver.enums.TestTypeEnums;
 import com.nttmk.englishlearningserver.responses.ApiResponse;
 import com.nttmk.englishlearningserver.responses.ExamResponse;
+import com.nttmk.englishlearningserver.responses.ExamResultResponse;
+import com.nttmk.englishlearningserver.responses.ExamViewResponse;
 import com.nttmk.englishlearningserver.services.ExamService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -69,8 +72,22 @@ public class ExamController {
     }
 
     @GetMapping("/exams/{id}/start")
-    public ResponseEntity<ApiResponse<ExamResponse>> startExam(@PathVariable String id) {
-        ExamResponse response = examService.startExam(id);
+    public ResponseEntity<ApiResponse<ExamViewResponse>> startExam(@PathVariable String id) {
+        ExamViewResponse response = examService.startExam(id);
         return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Get exam", response));
+    }
+
+    @PostMapping("/exams/submit")
+    public ResponseEntity<ApiResponse<ExamResultResponse>> submitExam(@RequestBody @Valid ExamSubmitDTO dto) {
+        ExamResultResponse response = examService.submitExam(dto);
+
+        return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "Submit success", response));
+    }
+
+    @GetMapping("/exams/result")
+    public ResponseEntity<ApiResponse<List<ExamResultResponse>>> getAllResult() {
+        List<ExamResultResponse> responses = examService.getAllExamResult();
+
+        return ResponseEntity.ok(new ApiResponse<>(HttpStatus.OK.value(), "get all result", responses));
     }
 }
