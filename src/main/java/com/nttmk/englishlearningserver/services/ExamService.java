@@ -1,21 +1,22 @@
 package com.nttmk.englishlearningserver.services;
 
+import com.nttmk.englishlearningserver.dto.AnsweredQuestionDTO;
 import com.nttmk.englishlearningserver.dto.ExamDTO;
 import com.nttmk.englishlearningserver.dto.ExamRandomDTO;
+import com.nttmk.englishlearningserver.dto.ExamSubmitDTO;
 import com.nttmk.englishlearningserver.enums.TestTypeEnums;
 import com.nttmk.englishlearningserver.exceptions.DataNotFoundException;
-import com.nttmk.englishlearningserver.models.Exam;
-import com.nttmk.englishlearningserver.models.Question;
+import com.nttmk.englishlearningserver.models.*;
 import com.nttmk.englishlearningserver.repository.ExamRepository;
+import com.nttmk.englishlearningserver.repository.ExamSubmissionRepository;
 import com.nttmk.englishlearningserver.repository.QuestionRepository;
-import com.nttmk.englishlearningserver.responses.AnswerResponse;
-import com.nttmk.englishlearningserver.responses.ExamResponse;
-import com.nttmk.englishlearningserver.responses.QuestionResponse;
+import com.nttmk.englishlearningserver.responses.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,6 +26,8 @@ import java.util.List;
 public class ExamService {
     private final ExamRepository examRepository;
     private final QuestionRepository questionRepository;
+    private final ExamSubmissionRepository examSubmissionRepository;
+    private final UserService userService;
 
     @Transactional
     public ExamResponse createExam(ExamDTO dto) {
@@ -115,22 +118,22 @@ public class ExamService {
         examRepository.deleteById(id);
     }
 
-    public ExamResponse startExam(String examId) {
+    public ExamViewResponse startExam(String examId) {
         Exam exam = examRepository.findById(examId)
                 .orElseThrow(() -> new DataNotFoundException("Exam not found"));
 
         List<Question> questions = questionRepository.findAllById(exam.getQuestionIds());
         Collections.shuffle(questions);
 
-        List<QuestionResponse> questionResponses = questions.stream()
-                .map(q -> QuestionResponse.builder()
+        List<QuestionViewResponse> questionViewResponses = questions.stream()
+                .map(q -> QuestionViewResponse.builder()
                         .id(q.getId())
                         .title(q.getTitle())
                         .content(q.getContent())
                         .audioUrl(q.getAudioUrl())
                         .type(q.getType())
                         .answers(q.getAnswers().stream()
-                                .map(a -> AnswerResponse.builder()
+                                .map(a -> AnswerViewResponse.builder()
                                         .label(a.getLabel())
                                         .content(a.getContent())
                                         .build())
@@ -138,14 +141,88 @@ public class ExamService {
                         .build())
                 .toList();
 
-        return ExamResponse.builder()
+        return ExamViewResponse.builder()
                 .id(exam.getId())
                 .title(exam.getTitle())
                 .description(exam.getDescription())
                 .type(exam.getType())
                 .duration(exam.getDuration())
-                .questions(questionResponses)
+                .questions(questionViewResponses)
                 .build();
+    }
+
+    @Transactional
+    public ExamResultResponse submitExam(ExamSubmitDTO dto) {
+        UserResponse user = userService.getCurrentUserLoggedIn();
+
+        Exam exam = examRepository.findById(dto.getExamId()).orElseThrow(()-> new DataNotFoundException("Exam not found"));
+
+        List<Question> questions = questionRepository.findAllById(exam.getQuestionIds());
+
+        int correctCount = 0;
+        List<AnsweredQuestion> answeredQuestions = new ArrayList<>();
+
+        for (AnsweredQuestionDTO a : dto.getAnswers()) {
+            Question q = questions.stream()
+                    .filter(qq -> qq.getId().equals(a.getQuestionId()))
+                    .findFirst()
+                    .orElseThrow(() -> new DataNotFoundException("Question not found"));
+
+            boolean isCorrect = q.getAnswers().stream()
+                    .anyMatch(ans ->
+                            ans.isCorrect()
+                                    && ans.getLabel().equals(a.getSelectedLabel())
+                    );
+
+            if (isCorrect) {
+                correctCount++;
+            }
+
+            answeredQuestions.add(
+                    AnsweredQuestion.builder()
+                            .questionId(a.getQuestionId())
+                            .selectedLabel(a.getSelectedLabel())
+                            .correct(isCorrect)
+                            .build()
+            );
+        }
+        double score = ((double) correctCount / exam.getQuestionIds().size()) * 10;
+
+        ExamSubmission submission = ExamSubmission.builder()
+                .userId(user.getId())
+                .examId(exam.getId())
+                .answers(answeredQuestions)
+                .totalQuestions(exam.getQuestionIds().size())
+                .correctAnswers(correctCount)
+                .score(score)
+                .startedAt(LocalDateTime.now())
+                .submittedAt(LocalDateTime.now())
+                .build();
+
+        examSubmissionRepository.save(submission);
+
+        return ExamResultResponse.builder()
+                .examId(exam.getId())
+                .totalQuestions(exam.getQuestionIds().size())
+                .correctAnswers(correctCount)
+                .score(score)
+                .build();
+    }
+
+    public List<ExamResultResponse> getAllExamResult() {
+        UserResponse user = userService.getCurrentUserLoggedIn();
+
+        List<ExamSubmission> submissions =
+                examSubmissionRepository.findAllByUserId(user.getId());
+
+        return submissions.stream()
+                .map(sub -> ExamResultResponse.builder()
+                        .examId(sub.getExamId())
+                        .totalQuestions(sub.getTotalQuestions())
+                        .correctAnswers(sub.getCorrectAnswers())
+                        .score(sub.getScore())
+                        .build())
+                .toList();
     }
 
     private ExamResponse mapToResponse(Exam exam) {

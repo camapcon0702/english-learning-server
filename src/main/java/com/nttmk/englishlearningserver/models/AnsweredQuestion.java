@@ -1,4 +1,4 @@
-package com.nttmk.englishlearningserver.responses;
+package com.nttmk.englishlearningserver.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AnswerResponse {
-    private String label;
-    private String content;
+public class AnsweredQuestion {
+    private String questionId;
+
+    private String selectedLabel;
+
     private boolean correct;
 }

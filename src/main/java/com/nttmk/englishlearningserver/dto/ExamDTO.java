@@ -1,10 +1,7 @@
 package com.nttmk.englishlearningserver.dto;
 
 import com.nttmk.englishlearningserver.enums.TestTypeEnums;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,5 +24,6 @@ public class ExamDTO {
     private int duration;
 
     @NotEmpty(message = "Danh sách câu hỏi không được để trống")
+    @Size(min = 1, message = "Bài thi phải có ít nhất 1 câu hỏi")
     private List<String> questionIds;
 }

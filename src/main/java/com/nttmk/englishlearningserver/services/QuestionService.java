@@ -1,6 +1,7 @@
 package com.nttmk.englishlearningserver.services;
 
 import com.nttmk.englishlearningserver.dto.QuestionDTO;
+import com.nttmk.englishlearningserver.exceptions.DataNotFoundException;
 import com.nttmk.englishlearningserver.models.Answer;
 import com.nttmk.englishlearningserver.models.Question;
 import com.nttmk.englishlearningserver.repository.QuestionRepository;
@@ -46,14 +47,14 @@ public class QuestionService {
 
     public QuestionResponse getQuestionById(String id) {
         Question question = questionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Question not found"));
+                .orElseThrow(() -> new DataNotFoundException("Question not found"));
         return mapToResponse(question);
     }
 
     @Transactional
     public QuestionResponse updateQuestion(String id, QuestionDTO dto) {
         Question question = questionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Question not found"));
+                .orElseThrow(() -> new DataNotFoundException("Question not found"));
 
         question.setTitle(dto.getTitle());
         question.setType(dto.getType());
@@ -91,6 +92,7 @@ public class QuestionService {
                                 .map(a -> AnswerResponse.builder()
                                         .label(a.getLabel())
                                         .content(a.getContent())
+                                        .correct(a.isCorrect())
                                         .build())
                                 .toList()
                 )
