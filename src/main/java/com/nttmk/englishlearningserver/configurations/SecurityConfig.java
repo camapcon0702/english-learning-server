@@ -41,8 +41,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll())
                 .addFilterBefore(new JwtValidator(), BasicAuthenticationFilter.class)
-                .csrf(csrf -> csrf.disable());
-//			.cors(cors -> cors.configurationSource(corsConfigurationSource()));
+                .csrf(csrf -> csrf.disable())
+			.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         return http.build();
     }
@@ -58,7 +58,7 @@ public class SecurityConfig {
                 CorsConfiguration cfg = new CorsConfiguration();
 
                 cfg.setAllowedOrigins(Arrays.asList(
-                        "http://localhost:3000/"));
+                        "http://localhost:3000"));
 
                 cfg.setAllowedMethods(Collections.singletonList("*"));
                 cfg.setAllowCredentials(true);
