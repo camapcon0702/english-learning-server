@@ -6,4 +6,5 @@ import com.nttmk.englishlearningserver.responses.UserResponse;
 
 public interface IUserService {
     void logout();
+    UserResponse getCurrentUserLoggedIn();
 }
