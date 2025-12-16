@@ -30,7 +30,6 @@ public class JwtValidator extends OncePerRequestFilter {
             try {
                 String email = JwtProvider.getEmailFromJwtToken(jwt);
                 String role = JwtProvider.getRoleFromJwtToken(jwt);
-                System.out.println("Email: " + email +  " Role: " + role);
 
                 List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
 
@@ -39,9 +38,6 @@ public class JwtValidator extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                System.out.println("Authorities = " + auth.getAuthorities());
-
-
 
             } catch (Exception e) {
                 throw new BadCredentialsException("invalid token");
