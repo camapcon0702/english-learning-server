@@ -6,3 +6,4 @@ spring:
   mongodb:
     uri: mongodb+srv://nosql12345678:nosql12345678@english-learning-db.lutuunj.mongodb.net/?appName=english-learning-db
     database: english-db
+

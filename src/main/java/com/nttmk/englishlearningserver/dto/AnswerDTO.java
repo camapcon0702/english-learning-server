@@ -6,16 +6,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class GrammarDTO {
-    @NotBlank(message = "Tên không được để trống")
-    private String name;
-    private String description;
-    @NotBlank(message = "Nội dung không được để trống")
+public class AnswerDTO {
+    @NotBlank(message = "Nhãn đáp án (A, B, C, D) không được để trống")
+    private String label;
+
+    @NotBlank(message = "Nội dung đáp án không được để trống")
     private String content;
+
+    private boolean correct;
 }
