@@ -3,6 +3,7 @@ package com.nttmk.englishlearningserver.controllers;
 import com.nttmk.englishlearningserver.dto.LoginDTO;
 import com.nttmk.englishlearningserver.responses.ApiResponse;
 import com.nttmk.englishlearningserver.services.UserService;
+import com.nttmk.englishlearningserver.servicesInterface.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     // User controller
 
-    private final UserService userService;
+    private final IUserService userService;
 
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<String>> logout() {
