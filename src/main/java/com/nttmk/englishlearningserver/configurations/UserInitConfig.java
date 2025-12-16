@@ -24,7 +24,7 @@ public class UserInitConfig {
             return;
         }
 
-        Role adminRole = roleRepository.findByName("ADMIN")
+        Role adminRole = roleRepository.findByName("ROLE_ADMIN")
                 .orElseThrow(() -> new RuntimeException("ADMIN role not found"));
 
         User admin = User.builder()
