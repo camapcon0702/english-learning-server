@@ -31,7 +31,7 @@ public class VocabularyTopicController {
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(HttpStatus.OK.value(), "Cập nhật chủ đề từ vựng thành công", vocabularyTopic));
     }
 
-    @DeleteMapping("/admin/vocabulary-topics")
+    @DeleteMapping("/admin/vocabulary-topics/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteVocabularyTopic(@PathVariable String id) {
         vocabularyTopicService.deleteVocabularyTopicById(id);
 
@@ -45,8 +45,8 @@ public class VocabularyTopicController {
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(HttpStatus.OK.value(), "Lấy từ vựng thành công", vocabularyTopics));
     }
 
-    @GetMapping("vocabulary-topics/{id}")
-    public ResponseEntity<ApiResponse<VocabularyTopic>> getVocabularyTopic(@PathVariable String id) {
+    @GetMapping("/vocabulary-topics/{id}")
+    public ResponseEntity<ApiResponse<VocabularyTopic>> getVocabularyTopicById(@PathVariable String id) {
         VocabularyTopic vocabularyTopic = vocabularyTopicService.getVocabularyTopicById(id);
 
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(HttpStatus.OK.value(), "Lấy chủ đề thành công",  vocabularyTopic));
