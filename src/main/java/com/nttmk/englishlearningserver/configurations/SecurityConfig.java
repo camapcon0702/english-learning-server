@@ -39,6 +39,8 @@ public class SecurityConfig {
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(Authorize -> Authorize
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
+                        // Public grammar content (view-only)
+                        .requestMatchers(HttpMethod.GET, "/api/grammars/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/exams/result").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/exams/*/start").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/exams/type").permitAll()
