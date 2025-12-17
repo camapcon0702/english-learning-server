@@ -161,12 +161,19 @@ public class ExamService {
 
         int correctCount = 0;
         List<AnsweredQuestion> answeredQuestions = new ArrayList<>();
+        List<AnsweredQuestionReviewResponse> review = new ArrayList<>();
 
         for (AnsweredQuestionDTO a : dto.getAnswers()) {
             Question q = questions.stream()
                     .filter(qq -> qq.getId().equals(a.getQuestionId()))
                     .findFirst()
                     .orElseThrow(() -> new DataNotFoundException("Question not found"));
+
+            String correctLabel = q.getAnswers().stream()
+                    .filter(Answer::isCorrect)
+                    .map(Answer::getLabel)
+                    .findFirst()
+                    .orElse(null);
 
             boolean isCorrect = q.getAnswers().stream()
                     .anyMatch(ans ->
@@ -183,6 +190,24 @@ public class ExamService {
                             .questionId(a.getQuestionId())
                             .selectedLabel(a.getSelectedLabel())
                             .correct(isCorrect)
+                            .build()
+            );
+
+            review.add(
+                    AnsweredQuestionReviewResponse.builder()
+                            .questionId(q.getId())
+                            .title(q.getTitle())
+                            .content(q.getContent())
+                            .audioUrl(q.getAudioUrl())
+                            .selectedLabel(a.getSelectedLabel())
+                            .correctLabel(correctLabel)
+                            .correct(isCorrect)
+                            .answers(q.getAnswers().stream()
+                                    .map(ans -> AnswerViewResponse.builder()
+                                            .label(ans.getLabel())
+                                            .content(ans.getContent())
+                                            .build())
+                                    .toList())
                             .build()
             );
         }
@@ -206,6 +231,7 @@ public class ExamService {
                 .totalQuestions(exam.getQuestionIds().size())
                 .correctAnswers(correctCount)
                 .score(score)
+                .review(review)
                 .build();
     }
 

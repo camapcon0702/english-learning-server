@@ -1,5 +1,7 @@
 package com.nttmk.englishlearningserver.responses;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,4 +16,6 @@ public class ExamResultResponse {
     private int totalQuestions;
     private int correctAnswers;
     private double score;
+
+    private List<AnsweredQuestionReviewResponse> review;
 }
